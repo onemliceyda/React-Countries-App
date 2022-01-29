@@ -76,14 +76,7 @@ export default function App() {
                     (
                         // tablo yapısı
                         <Table striped responsive="sm" bordered hover className="text-center">
-                            <thead>
-                            <tr>
-                                <th className="w-25">Country</th>
-                                <th className="w-25">Capital</th>
-                                <th className="w-25">Region</th>
-                                <th className="w-25">Flag</th>
-                            </tr>
-                            </thead>
+                           <Tables/>
                             <tbody className="shadow shadow-lg">
                             {filteredCountries.map(country => (
                                 <tr key={country.numericCode}>
