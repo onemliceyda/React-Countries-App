@@ -10,7 +10,8 @@ export default function App() {
     const [search, setSearch] = useState('');
     const [filteredCountries, setFilteredCountries] = useState([]);
     const [loaded, setLoaded] = useState(true);
-    const [searchGeneral,setSearchGeneral] = useState('');
+    const [searchGeneral,setSearchGeneral] = useState([]);
+    const [searchTitle, setSearchTitle] = useState("");
     useEffect(() => {
         axios
             .get('https://restcountries.com/v2/all ')
@@ -24,18 +25,24 @@ export default function App() {
                 }
             })
             .catch(error => console.log({ error })) //olası hatayı yakalamak için kullanılır
-    }, [])
+           
+        }, [])
 
     const filteredCapitalizeSetter = (searchTerm) => {
         //bazı ülkelerin capital verisi yok ondan => capital?
         setFilteredCountries(countries.filter(country => country.capital?.toLocaleLowerCase('tr').includes(searchTerm.toLocaleLowerCase('tr'))))
     }
     
+    const arama=searchGeneral.filter((value)=>{
+        if (searchTitle === "") {
+            return value;
+          } else if (
+            value.title.toLowerCase().includes(searchTitle.toLowerCase())
+          ) {
+            return value;
+          }
+        }).map((item) => <h5 key={item.id}>{item.title}</h5>)
     
-    const generalSearch=((val)=>{
-         setSearchGeneral(countries.filter(country => country.data.toLocaleLowerCase('tr').includes(val.toLocaleLowerCase('tr'))))
-        })
-
     return (
 
         <div className="App">
@@ -54,7 +61,7 @@ export default function App() {
                     <div className="col">
                         {/* burası generale göre arar */}
                         <input type="text" className="form-control shadow border-2 py-3" placeholder="General Search..."
-                            onChange={e =>generalSearch(e.target.value)}/>
+                            onChange={e =>arama(e.target.value)}/>
                     </div>
                 </div>
 
