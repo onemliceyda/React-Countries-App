@@ -2,6 +2,7 @@ import React, {useEffect, useState} from 'react';
 import axios from 'axios';
 import Table from 'react-bootstrap/Table'
 import ReactLoading from 'react-loading';
+import Tables from './Tables';
 
 export default function App() {
 
@@ -9,7 +10,9 @@ export default function App() {
     const [search, setSearch] = useState('');
     const [filteredCountries, setFilteredCountries] = useState([]);
     const [loaded, setLoaded] = useState(true);
-
+    const[filteredGeneral,setFilteredGeneral]=useState('');
+    const[dataSource,setDataSource]=useState(countries);
+    const[tableFilter,setTableFilter]=([]);
     useEffect(() => {
         axios
             .get('https://restcountries.com/v2/all ')
@@ -18,6 +21,8 @@ export default function App() {
                     setCountries(response.data)
                     setFilteredCountries(response.data)
                     setLoaded(false);
+                    setFilteredGeneral(response.data)
+                    setTableFilter(response.data)
                 }
             })
             .catch(error => console.log({error})) //olası hatayı yakalamak için kullanılır
@@ -27,9 +32,22 @@ export default function App() {
         //bazı ülkelerin capital verisi yok ondan => capital?
         setFilteredCountries(countries.filter(country => country.capital?.toLocaleLowerCase('tr').includes(searchTerm.toLocaleLowerCase('tr'))))
     }
-
+    const filteredData=(e)=>{
+        if(e.target.value!=""){
+            setFilteredGeneral(e.target.value);
+            const filterTable=dataSource.filter(o=>Object.keys(o).some(k=>
+                String(o[k]).toLowerCase().includes(e.target.value.toLowerCase())));
+                setTableFilter([...filterTable])
+    }else{
+        setFilteredGeneral(e.target.value);
+        setDataSource([...dataSource]);
+    }
+    }
+    
     return (
+       
         <div className="App">
+             
             <h1 className="text-center my-4">
                 <u> React <span className="text-primary">Countries</span> <span className="text-danger">App</span></u>
             </h1>
@@ -44,9 +62,7 @@ export default function App() {
                     <div className="col">
                         {/* burası generale göre arar */}
                         <input type="text" className="form-control shadow border-2 py-3" placeholder="General Search..."
-                               onChange={e => {
-                                   console.log('General search')
-                               }}/>
+                               onChange={e=>setFilteredGeneral(e.target.value)}/>
                     </div>
                 </div>
 
@@ -89,5 +105,8 @@ export default function App() {
 
 
         </div>
+        
+
     )
 }
+
