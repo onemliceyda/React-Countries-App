@@ -1,8 +1,7 @@
-import React, { useEffect, useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import axios from 'axios';
-import Table from 'react-bootstrap/Table'
 import ReactLoading from 'react-loading';
-import Tables from './Tables';
+import TableComponent from "./components/TableComponent";
 
 export default function App() {
 
@@ -23,8 +22,7 @@ export default function App() {
 
                 }
             })
-            .catch(error => console.log({ error })) //olası hatayı yakalamak için kullanılır
-
+            .catch(error => console.log({error})) //olası hatayı yakalamak için kullanılır
     }, [])
 
     const filteredCapitalizeSetter = (searchTerm) => {
@@ -32,22 +30,14 @@ export default function App() {
         setFilteredCountries(countries.filter(country => country.capital?.toLocaleLowerCase('tr').includes(searchTerm.toLocaleLowerCase('tr'))))
     }
 
-
-    const excludeColumns = ["country", "capital", "region"];
-
-    const handleChange = value => {
+    const filteredGeneralSetter = (value) => {
         setSearch(value);
-        filterData(value);
-    };
-
-
-    const filterData = (value) => {
-        const lowercasedValue = value.toLowerCase().trim();
+        const lowercasedValue = value.toLocaleLowerCase('tr').trim();
         if (lowercasedValue === "") setCountries(countries);
         else {
             const filteredData = countries.filter(item => {
                 return Object.keys(item).some(key =>
-                    excludeColumns.includes(key) ? false : item[key].toString().toLowerCase().includes(lowercasedValue)
+                    item[key].toString().toLocaleLowerCase('tr').includes(lowercasedValue)
                 );
             });
             setFilteredCountries(filteredData);
@@ -57,7 +47,6 @@ export default function App() {
     return (
 
         <div className="App">
-
             <h1 className="text-center my-4">
                 <u> React <span className="text-primary">Countries</span> <span className="text-danger">App</span></u>
             </h1>
@@ -66,47 +55,29 @@ export default function App() {
                     <div className="col">
                         {/* burası capitale göre arar */}
                         <input type="text" className="form-control shadow border-2 py-3"
-                            placeholder="Capital Search...  "
-                            onChange={e => filteredCapitalizeSetter(e.target.value)} />
+                               placeholder="Capital Search...  "
+                               onChange={e => filteredCapitalizeSetter(e.target.value)}/>
                     </div>
                     <div className="col">
                         {/* burası generale göre arar */}
                         <input type="text" className="form-control shadow border-2 py-3" placeholder="General Search..."
-                            onChange={e => handleChange(e.target.value)/*e =>arama(e.target.value)*/} />
+                               onChange={e => filteredGeneralSetter(e.target.value)/*e =>arama(e.target.value)*/}/>
                     </div>
                 </div>
 
                 {loaded ?
+                    //yükleniyorsa yüklenme efekti gösterilsin
                     (
                         <div className="d-flex justify-content-center align-items-center mt-5">
-                            <ReactLoading type="spin" color="#BC409D" height={400} width={140} />
+                            <ReactLoading type="spin" color="#BC409D" height={400} width={140}/>
                         </div>
                     )
+                    //yüklendiğinde tablo gösterilsin
                     :
                     (
-                        // tablo yapısı
-                        <Table striped responsive="sm" bordered hover className="text-center">
-                            <Tables />
-                            <tbody className="shadow shadow-lg">
-                                {filteredCountries.map(country => (
-                                    <tr key={country.numericCode}>
-                                        <td>{country.name}</td>
-                                        <td>{country.capital}</td>
-                                        <td>{country.region}</td>
-                                        <td><img src={country.flag} alt={country.name}
-                                            style={{ width: "60px", height: "40px" }}
-                                            className='rounded mx-auto d-block' />
-                                        </td>
-                                    </tr>
-                                ))}
-                            </tbody>
-                        </Table>
+                        <TableComponent filteredCountries={filteredCountries}/>
                     )}
-
-
             </div>
-
-
         </div>
 
 
