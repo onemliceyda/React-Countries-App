@@ -30,18 +30,19 @@ export default function App() {
         setFilteredCountries(countries.filter(country => country.capital?.toLocaleLowerCase('tr').includes(searchTerm.toLocaleLowerCase('tr'))))
     }
 
-    const filteredGeneralSetter = (value) => {
+      const filteredGeneralSetter = (value) => {
+        let filteredData = [];
         setSearch(value);
         const lowercasedValue = value.toLocaleLowerCase('tr').trim();
         if (lowercasedValue === "") setCountries(countries);
         else {
-            const filteredData = countries.filter(item => {
-                return Object.keys(item).some(key =>
-                    item[key].toString().toLocaleLowerCase('tr').includes(lowercasedValue)
-                );
-            });
+            countries.forEach((country) => {
+                let data = JSON.stringify(country).toLocaleLowerCase('tr')
+                data.includes(value.toLocaleLowerCase('tr')) ? filteredData.push(country) : null
+            })
             setFilteredCountries(filteredData);
         }
+
     }
 
     return (
